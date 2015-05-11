@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ImageSearchActivity">
+
+
+    <Button
+        android:id="@+id/search_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="@string/search"
+        android:layout_margin="10dp"
+        />
+
+    <EditText android:id="@+id/search_string" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:keepScreenOn="true" android:textColor="#33b5e5"
+        android:textStyle="bold" android:textSize="20sp" android:gravity="left"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="10dp"
+        android:layout_toLeftOf="@id/search_button"
+        android:hint="Search String" />
+
+    <GridView
+        android:id="@+id/imagesGridview"
+        android:layout_below="@id/search_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="90dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        />
+
+    <LinearLayout
+        android:id="@+id/load_more_view"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/more_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:text="Loading More..."
+                android:textColor="#adadad"
+                android:textSize="17sp"
+                />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/more_empty_view"
+            android:layout_width="wrap_content"
+            android:layout_height="5dp"
+            android:background="#ffffff" />
+
+    </LinearLayout>
+</RelativeLayout>
