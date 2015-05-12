@@ -62,13 +62,11 @@ public class FlickrImageSearchApplication extends Application{
 
     public <T> void addToRequestQueue(Request<T> request, String tag) {
         request.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        VolleyLog.d("Adding request to queue: %s", request.getUrl());
         getRequestQueue().add(request);
     }
 
     public <T> void addToRequestQueue(Request<T> request) {
         request.setTag(TAG);
-        VolleyLog.d("Adding request to queue: %s", request.getUrl());
         getRequestQueue().add(request);
     }
 

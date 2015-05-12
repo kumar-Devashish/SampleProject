@@ -9,7 +9,9 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.android.flickrimagesearch.FlickrImageSearchApplication;
+import com.android.flickrimagesearch.FlickrSearchConstants;
 import com.android.flickrimagesearch.model.ImageSearchResponse;
+import com.android.flickrimagesearch.model.Photo;
 import com.android.volley.toolbox.NetworkImageView;
 
 /**
@@ -30,8 +32,8 @@ public class ImageAdapter extends BaseAdapter {
         return imageSearchResponse.getPhotos().getPhoto().size();
     }
 
-    public Object getItem(int position) {
-        return null;
+    public Photo getItem(int position) {
+        return imageSearchResponse.getPhotos().getPhoto().get(position);
     }
 
     public long getItemId(int position) {
@@ -44,7 +46,7 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new NetworkImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(150, 150));
+            imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(8, 8, 8, 8);
             imageView.setBackgroundColor(Color.BLACK);
@@ -52,8 +54,8 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (NetworkImageView) convertView;
         }
 
-        String url = "http://farm" + imageSearchResponse.getPhotos().getPhoto().get(position).getFarm() + ".staticflickr.com/" + imageSearchResponse.getPhotos().getPhoto().get(position).getServer() + "/" +
-                imageSearchResponse.getPhotos().getPhoto().get(position).getId() + "_" + imageSearchResponse.getPhotos().getPhoto().get(position).getSecret() +".jpg";
+        String url = FlickrSearchConstants.BASE_IMAGE + imageSearchResponse.getPhotos().getPhoto().get(position).getFarm() + FlickrSearchConstants.CONTEXT_IMAGE + imageSearchResponse.getPhotos().getPhoto().get(position).getServer() + "/" +
+                imageSearchResponse.getPhotos().getPhoto().get(position).getId() + "_" + imageSearchResponse.getPhotos().getPhoto().get(position).getSecret() +FlickrSearchConstants.IMAGE_EXTENSION_JPEG;
 
         imageView.setAdjustViewBounds(true);
         imageView.setImageUrl(url , FlickrImageSearchApplication.getmInstance().getImageLoader());

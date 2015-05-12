@@ -47,7 +47,7 @@ public class ResponseListener {
 
         GsonRequest gsonRequest = new GsonRequest(url,ImageSearchResponse.class, null ,responseListener, errorListener);
         // Add the request to the RequestQueue.
-        FlickrImageSearchApplication.getmInstance().getRequestQueue().add(gsonRequest);
+        FlickrImageSearchApplication.getmInstance().addToRequestQueue(gsonRequest ,"");
     }
 
 }

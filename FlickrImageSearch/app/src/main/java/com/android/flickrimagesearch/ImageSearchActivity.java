@@ -4,10 +4,14 @@ package com.android.flickrimagesearch;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -18,13 +22,14 @@ import android.widget.LinearLayout;
 import com.android.flickrimagesearch.adapter.ImageAdapter;
 import com.android.flickrimagesearch.model.Data;
 import com.android.flickrimagesearch.model.ImageSearchResponse;
+import com.android.flickrimagesearch.model.Photo;
 import com.android.flickrimagesearch.network.ResponseListener;
 
 
 /**
  * This is the entry point (Launcher) activity which allows user to search images from flickr using keywords.
  */
-public class ImageSearchActivity extends Activity implements View.OnClickListener , AdapterView.OnItemClickListener{
+public class ImageSearchActivity extends ActionBarActivity implements View.OnClickListener , AdapterView.OnItemClickListener{
     private GridView imagesGridView;
     private EditText searchText;
     private int page;
@@ -32,8 +37,7 @@ public class ImageSearchActivity extends Activity implements View.OnClickListene
     private ImageSearchResponse data;
     private ImageAdapter imageAdapter;
     private LinearLayout loadMoreView;
-    private String BASE_URL = "https://api.flickr.com/services/rest/";
-    private String PARAMETER_SERACH = "method=flickr.photos.search";
+
 
 
     @Override
@@ -54,7 +58,14 @@ public class ImageSearchActivity extends Activity implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.search_button:
-                String url ="https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0f43106ac04befee4f14949eeba90455&text="+searchText.getText().toString()+"&per_page=100&page=1&format=json&nojsoncallback=1";
+                //Hide keyboard
+                InputMethodManager imm = (InputMethodManager)getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
+                String url=FlickrSearchConstants.BASE_URL+FlickrSearchConstants.PARAMETER_SERACH+FlickrSearchConstants.AND_API_KEY+FlickrSearchConstants.API_KEY
+                        +FlickrSearchConstants.AND_TEXT+searchText.getText().toString()+FlickrSearchConstants.AND_PER_PAGE+FlickrSearchConstants.PER_PAGE_VALUE
+                    + FlickrSearchConstants.AND_PAGE+FlickrSearchConstants.PAGE_VALUE+FlickrSearchConstants.AND_FORMAT+FlickrSearchConstants.FORMAT_VALUE
+                    + FlickrSearchConstants.AND_JSONCALLBACK+FlickrSearchConstants.JSON_CALLBACK_VALUE;
                 ResponseListener responseListener = new ResponseListener(this,url);
                 loading= true;
                 responseListener.makeServiceCall();
@@ -66,12 +77,16 @@ public class ImageSearchActivity extends Activity implements View.OnClickListene
     }
 
     @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Log.i(getClass().getName(), "onItemClicked");
+        Photo photoClicked =
+                ((ImageAdapter) adapterView.getAdapter()).getItem(position);
+        Intent detailViewIntent = new Intent(this,ShowImageDetailActivity.class);
+        detailViewIntent.putExtra(FlickrSearchConstants.PHOTOCLICKED,photoClicked);
+        startActivity(detailViewIntent);
     }
 
     public void setResponse(Data data){
-        Log.i(getClass().getSimpleName(),"Setting response for page  "+page);
         loading= false;
         if(this.data ==null){
             this.data = (ImageSearchResponse)data;
@@ -90,7 +105,7 @@ public class ImageSearchActivity extends Activity implements View.OnClickListene
 
     public void showError(){
         loading = false;
-        new AlertDialog.Builder(this).setTitle("Error!").setMessage("The service is not responding.Please checkBack soon.").show();
+        new AlertDialog.Builder(this).setTitle("Error!").setMessage(getResources().getString(R.string.service_error)).setNeutralButton("OK",null).show();
 
     }
 
@@ -106,10 +121,14 @@ public class ImageSearchActivity extends Activity implements View.OnClickListene
             if (!loading && firstVisibleItem == (totalItemCount - visibleItemCount) && totalItemCount >0 && page < ((ImageSearchResponse)data).getPhotos().getPages()) {
                 loading = true;
                 page = page + 1;
-                Log.i(getClass().getSimpleName(),"The page number is "+page);
                 //Call service with new page index.
                 loadMoreView.setVisibility(View.VISIBLE);
-                String url ="https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0f43106ac04befee4f14949eeba90455&text="+searchText.getText().toString()+"&per_page=100&page="+page+"&format=json&nojsoncallback=1";
+
+                String url=FlickrSearchConstants.BASE_URL+FlickrSearchConstants.PARAMETER_SERACH+FlickrSearchConstants.AND_API_KEY+FlickrSearchConstants.API_KEY
+                        +FlickrSearchConstants.AND_TEXT+searchText.getText().toString()+FlickrSearchConstants.AND_PER_PAGE+FlickrSearchConstants.PER_PAGE_VALUE
+                        + FlickrSearchConstants.AND_PAGE+page+FlickrSearchConstants.AND_FORMAT+FlickrSearchConstants.FORMAT_VALUE
+                        + FlickrSearchConstants.AND_JSONCALLBACK+FlickrSearchConstants.JSON_CALLBACK_VALUE;
+
                 ResponseListener responseListener = new ResponseListener(ImageSearchActivity.this,url);
                 responseListener.makeServiceCall();
             }
