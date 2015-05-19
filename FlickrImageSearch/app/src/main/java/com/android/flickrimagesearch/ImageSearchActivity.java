@@ -29,7 +29,7 @@ import com.android.flickrimagesearch.network.ResponseListener;
 /**
  * This is the entry point (Launcher) activity which allows user to search images from flickr using keywords.
  */
-public class ImageSearchActivity extends ActionBarActivity implements View.OnClickListener , AdapterView.OnItemClickListener{
+public class ImageSearchActivity extends ActionBarActivity implements View.OnClickListener , AdapterView.OnItemClickListener , ResponseListener.SetData{
     private GridView imagesGridView;
     private EditText searchText;
     private int page;
@@ -107,6 +107,22 @@ public class ImageSearchActivity extends ActionBarActivity implements View.OnCli
         loading = false;
         new AlertDialog.Builder(this).setTitle("Error!").setMessage(getResources().getString(R.string.service_error)).setNeutralButton("OK",null).show();
 
+    }
+
+    @Override
+    public void setData(Data data) {
+        loading= false;
+        if(this.data ==null){
+            this.data = (ImageSearchResponse)data;
+            imageAdapter = new ImageAdapter(ImageSearchActivity.this,this.data);
+            imagesGridView.setAdapter(imageAdapter);
+        }else{
+            ((ImageSearchResponse) this.data).getPhotos().getPhoto().addAll(((ImageSearchResponse) data).getPhotos().getPhoto());
+            imageAdapter.notifyDataSetChanged();
+            if(loadMoreView.getVisibility() == View.VISIBLE){
+                loadMoreView.setVisibility(View.GONE);
+            }
+        }
     }
 
     /**

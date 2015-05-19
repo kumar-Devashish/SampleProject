@@ -19,6 +19,10 @@ public class ResponseListener {
     private Context context;
     private String url;
 
+    public interface SetData{
+        public void setData(Data data);
+    }
+
     public ResponseListener(Context context , String url){
         this.context = context;
         this.url = url;
@@ -30,9 +34,8 @@ public class ResponseListener {
             public void onResponse(Data response) {
                 // Do something with the response
                 Log.i(getClass().getName(), "The Response is " + response);
-                if(context instanceof  ImageSearchActivity) {
-                    ((ImageSearchActivity) context).setResponse(response);
-                }
+                    ((ImageSearchActivity) context).setData(response);
+
             }
         };
 
